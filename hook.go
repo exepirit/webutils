@@ -54,11 +54,17 @@ func (hook *baseHook) Use(composer app.Composer, ctx app.Context) {
 }
 
 func (hook *baseHook) indirectSet(field interface{}, value interface{}) {
-	if field == nil || value == nil {
+	if field == nil {
 		return
 	}
-	v := reflect.ValueOf(value)
+
 	target := reflect.Indirect(reflect.ValueOf(field))
+	if value == nil {
+		target.Set(reflect.Zero(target.Type()))
+		return
+	}
+
+	v := reflect.ValueOf(value)
 	if !v.Type().AssignableTo(target.Type()) {
 		panic(fmt.Errorf("target type (%s) is not assignable to %s", target.Type(), v.Type()))
 	}
