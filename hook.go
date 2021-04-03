@@ -1,4 +1,4 @@
-package hook
+package webutils
 
 import (
 	"fmt"
