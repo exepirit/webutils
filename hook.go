@@ -7,6 +7,7 @@ import (
 	"github.com/maxence-charriere/go-app/v8/pkg/app"
 )
 
+// Hook is callback handler for applying on components asyncrhonious function side-effects.
 type Hook interface {
 	SetResult(interface{}) Hook
 	SetError(*error) Hook
@@ -21,6 +22,7 @@ type baseHook struct {
 	act    Action
 }
 
+// NewHook creates new hook with specified action.
 func NewHook(act Action) Hook {
 	return &baseHook{
 		result: nil,
@@ -29,16 +31,20 @@ func NewHook(act Action) Hook {
 	}
 }
 
+// SetResult sets action result variable.
+// Pointer, provided in argument `v` stored in hook, and after action done it consume result value.
 func (hook *baseHook) SetResult(v interface{}) Hook {
 	hook.result = hook.getPointer(v)
 	return hook
 }
 
+// SetError sets action result error variable.
 func (hook *baseHook) SetError(err *error) Hook {
 	hook.error = hook.getPointer(err)
 	return hook
 }
 
+// Use asynchronious run Acton functions and put back result and error values.
 func (hook *baseHook) Use(composer app.Composer, ctx app.Context) {
 	ctx.Async(func() {
 		result, err := hook.act(ctx)
