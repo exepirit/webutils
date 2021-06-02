@@ -1,3 +1,4 @@
+//go:build js
 // +build js
 
 package webutils
@@ -192,6 +193,7 @@ func jsFetch(url string, options *fetchOptions) (*response, error) {
 		Call("then", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			resp := args[0]
 			headersContainer := resp.Get("headers").Call("entries")
+			r.headers = make(map[string]string)
 			for {
 				cond := headersContainer.Call("next")
 				if cond.Get("done").Bool() {
